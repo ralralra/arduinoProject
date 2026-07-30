@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8">
+<title>단계별 코드 & 설명</title><style>
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+@page{size:A4;margin:14mm 13mm;}
+html,body{margin:0;}
+body{font-family:"NanumGothic","맑은 고딕",sans-serif;color:#20272e;}
+.page{height:263mm;display:flex;flex-direction:column;page-break-after:always;}
+.page:last-child{page-break-after:auto;}
+.hd{display:flex;align-items:baseline;gap:12px;border-bottom:2.5px solid #4a4a4a;padding-bottom:6px;}
+.num{font-size:30pt;font-weight:800;color:#2b3a4a;font-family:"Arial Black",sans-serif;}
+.en{font-size:26pt;font-weight:800;color:#1f2a36;letter-spacing:-.5px;font-family:"Arial Black",Arial,sans-serif;}
+.sub{margin:9px 0 12px;font-size:12.5pt;color:#5b6b7a;}
+.lab{font-size:12.5pt;font-weight:800;color:#2f5069;margin:2px 0 6px;}
+.file{font-size:11pt;color:#8a97a3;font-family:Consolas,monospace;}
+.code{background:#12233a;border-radius:8px;padding:12px 15px;margin-bottom:14px;
+  white-space:pre;font-family:Consolas,"D2Coding",monospace;font-size:10.5pt;line-height:1.5;color:#e6edf7;overflow:hidden;}
+.code .c{color:#7fa7d9;}
+.exp{border:1.5px solid #9db6c8;background:#eef3f7;border-radius:10px;padding:12px 16px;}
+.exp li{font-size:12pt;line-height:1.5;margin-bottom:7px;color:#243039;}
+.exp li:last-child{margin-bottom:0;}
+.exp b{color:#215072;}
+.foot{margin-top:auto;text-align:center;color:#9aa7b3;font-size:9pt;padding-top:10px;}
+</style></head><body><section class="page">
+  <div class="hd"><span class="num">1</span><span class="en">awake robot Arm</span></div>
+  <div class="sub">서보를 하나씩 움직여 어느 관절인지 확인한다</div>
+  <div class="lab">💻 코드 <span class="file">— 01_servo_single_test.ino</span></div>
+  <div class="code">#include &lt;Servo.h&gt;
+int PIN = 2;            <span class="c">// ★ 이 숫자만 2→3→9→8→4→5 로 바꿔 업로드</span>
+Servo myservo;
+ 
+void setup() {
+  myservo.attach(PIN);  <span class="c">// PIN 번호에 서보 연결</span>
+}
+void loop() {
+  for (int a=0; a&lt;=90; a++){ myservo.write(a); delay(15); } <span class="c">// 0→90도</span>
+  for (int a=90; a&gt;=0; a--){ myservo.write(a); delay(15); } <span class="c">// 90→0도</span>
+}</div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li><b>attach(PIN)</b> : 서보를 그 핀에 연결한다. PIN 숫자만 바꿔 업로드하면 다른 서보가 움직인다.</li><li><b>write(a)</b> : 서보를 a도로 보낸다. for문으로 0→90→0을 반복해 왕복시킨다.</li><li><b>delay(15)</b> : 한 칸 움직일 때마다 잠깐 멈춤 → 숫자를 키우면 더 천천히.</li><li>움직이는 서보를 보며 <b>관절 매핑표</b>(핀=관절)를 채운다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">2</span><span class="en">Code Dissection</span></div>
+  <div class="sub">기본 조이스틱 제어 코드를 해석한다</div>
+  <div class="lab">💻 코드 <span class="file">— 04_basic_joystick_control.ino</span></div>
+  <div class="code">const int SERVOS = 6;                 <span class="c">// 서보 개수</span>
+int PIN[SERVOS], MIN[SERVOS], MAX[SERVOS], INITANGLE[SERVOS], ANA[SERVOS];
+ 
+void setup(){
+  PIN[0]=2; MIN[0]=0; MAX[0]=180; INITANGLE[0]=90; ANA[0]=0; <span class="c">// 1번</span>
+  ... (6번까지)
+  for(int i=0;i&lt;SERVOS;i++){ myservo[i].attach(PIN[i]);
+     myservo[i].write(INITANGLE[i]); }
+}
+void loop(){
+  value = analogRead(ANA[i]);         <span class="c">// 조이스틱 값(0~1023)</span>
+  if(value&gt;612) currentAngle++;       <span class="c">// 한쪽 → 각도 +</span>
+  else if(value&lt;412) currentAngle--;  <span class="c">// 반대 → 각도 -</span>
+}</div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li>코드는 <b>3덩어리</b> — 준비(변수) · setup(설정) · loop(반복).</li><li><b>해석표에서 찾을 값</b> : 서보 개수(SERVOS), 핀(PIN), 조이스틱(ANA), 시작각(INITANGLE), 최소·최대(MIN/MAX).</li><li><b>612 / 412</b> : 조이스틱 값의 경계. 그 사이(가운데)는 '멈춤'.</li><li>숫자를 바꿔 보며(코드 탐정) 어떤 값이 무엇을 바꾸는지 확인한다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">3</span><span class="en">Joystick Master</span></div>
+  <div class="sub">정밀 제어의 원리를 이해한다</div>
+  <div class="lab">💻 코드 <span class="file">— 04_basic_joystick_control.ino</span></div>
+  <div class="code">void loop(){
+  delay(50);                          <span class="c">// 전체 속도(작을수록 빠름)</span>
+  for(int i=0;i&lt;SERVOS;i++){
+    value[i] = analogRead(ANA[i]);
+    if(value[i]&gt;612){
+      if(currentAngle[i]&lt;MAX[i]) currentAngle[i]++;   <span class="c">// 한 번에 +1도씩만</span>
+      myservo[i].write(currentAngle[i]);
+    } else if(value[i]&lt;412){
+      if(currentAngle[i]&gt;MIN[i]) currentAngle[i]--;   <span class="c">// -1도씩만</span>
+      myservo[i].write(currentAngle[i]);
+    }
+  }
+}</div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li>각도를 <b>한 번에 1도씩만</b> 바꾼다 → 부드럽고 안정적인 움직임.</li><li>한 번에 크게 움직이면 팔이 흔들리거나 물체를 놓친다.</li><li><b>delay(50)</b>을 줄이면 빨라지지만 거칠어진다 → 정밀함과 속도는 트레이드오프.</li><li>MIN/MAX가 각도를 벗어나지 못하게 막아 안전을 지킨다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">4</span><span class="en">Home Position</span></div>
+  <div class="sub">전원을 켤 때의 안정 자세를 정한다</div>
+  <div class="lab">💻 코드 <span class="file">— 04_basic_joystick_control.ino</span></div>
+  <div class="code">void setup(){
+  <span class="c">//         핀  최소 최대  시작각  조이스틱</span>
+  PIN[0]=2; MIN[0]=0; MAX[0]=180; INITANGLE[0]=90; ANA[0]=0;
+  ...
+  PIN[5]=5; MIN[5]=0; MAX[5]=90;  INITANGLE[5]=45; ANA[5]=5; <span class="c">// 그리퍼</span>
+ 
+  for(int i=0;i&lt;SERVOS;i++){
+    myservo[i].attach(PIN[i]);
+    myservo[i].write(INITANGLE[i]);   <span class="c">// ← 켜면 이 각도로 이동</span>
+  }
+}</div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li><b>INITANGLE</b> = 전원을 켰을 때 가는 시작 자세(홈 포지션).</li><li>이 값을 바꿔 팔이 안정적으로 서는 자세를 직접 정한다.</li><li>그리퍼(6번)는 가동범위가 0~90이라 시작각도 그 안(예: 45)이어야 한다.</li><li>홈이 안정적이면 매번 같은 자세에서 작업을 시작할 수 있다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">5</span><span class="en">gripper craftsman</span></div>
+  <div class="sub">그리퍼(손)를 여닫아 물체를 집는다</div>
+  <div class="lab">💻 코드 <span class="file">— 08_functions_button.ino</span></div>
+  <div class="code">const int GRIPPER = 5;        <span class="c">// 그리퍼 = 6번 서보(인덱스 5)</span>
+const int GRIP_OPEN  = 0;     <span class="c">// 열림 0도</span>
+const int GRIP_CLOSE = 90;    <span class="c">// 닫힘 90도</span>
+ 
+void gripperOpen(){  myservo[GRIPPER].write(GRIP_OPEN);  delay(400); }
+void gripperClose(){ myservo[GRIPPER].write(GRIP_CLOSE); delay(400); }</div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li>그리퍼는 <b>0도(열림) / 90도(닫힘)</b> 두 각도만 쓰면 된다.</li><li><b>delay(400)</b> : 손이 다 움직일 때까지 기다린다(안 그러면 다음 동작이 먼저 시작).</li><li>무른 물체(마시멜로)는 각도를 조금 덜 닫아 힘을 줄인다.</li><li>이렇게 손 제어를 <b>함수</b>로 묶어 두면 다음 단계에서 재사용한다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">6</span><span class="en">Talking to a Robot</span></div>
+  <div class="sub">시리얼로 현재 각도를 읽어 기록한다</div>
+  <div class="lab">💻 코드 <span class="file">— 07_serial_record.ino</span></div>
+  <div class="code">void setup(){
+  Serial.begin(9600);        <span class="c">// ★ 컴퓨터와 통신 시작</span>
+  ...
+}
+void loop(){
+  <span class="c">// (조이스틱 제어) ...</span>
+  if(Serial.available()&gt;0 &amp;&amp; Serial.read()==&#x27;p&#x27;) printAngles();
+}
+void printAngles(){          <span class="c">// 6축 각도를 한 줄로 출력</span>
+  for(int i=0;i&lt;SERVOS;i++) Serial.print(myservo[i].read());
+}</div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li><b>Serial.begin(9600)</b> : 로봇과 컴퓨터가 '대화'할 통로를 연다.</li><li>시리얼 모니터에 <b>p</b>를 입력하면 현재 6축 각도가 숫자로 출력된다.</li><li>즉 로봇의 자세를 <b>숫자(데이터)</b>로 남기는 것 — 자동화의 재료가 된다.</li><li>출력된 각도를 활동지 포즈 카드에 그대로 적는다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">7</span><span class="en">Pick &amp; Place</span></div>
+  <div class="sub">집기→이동→놓기를 순서로 나눈다</div>
+  <div class="lab">💻 코드 <span class="file">— 08_functions_button.ino</span></div>
+  <div class="code">void moveTo(int target[]){    <span class="c">// 팔(1~5번)을 목표 자세로 부드럽게</span>
+  ... 1도씩 target 으로 이동 ...
+}
+<span class="c">// 수동 작업 순서(설계):</span>
+gripperOpen();     <span class="c">// 손 펴고</span>
+moveTo(PICK);      <span class="c">// 집는 위치로</span>
+gripperClose();    <span class="c">// 집고</span>
+moveTo(PLACE);     <span class="c">// 놓을 위치로</span>
+gripperOpen();     <span class="c">// 놓기</span></div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li>작업을 <b>집기 → 들기 → 이동 → 놓기</b>의 순서로 쪼갠다.</li><li><b>moveTo(target)</b> : 팔을 목표 자세로 옮기는 함수(그리퍼는 건드리지 않음).</li><li>순서만 정하면 사람이든 로봇이든 같은 작업을 반복할 수 있다.</li><li>이 '순서 설계'가 다음 단계 자동화의 밑그림이 된다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">8</span><span class="en">Posture Recipe Book</span></div>
+  <div class="sub">핵심 자세를 각도 데이터로 저장한다</div>
+  <div class="lab">💻 코드 <span class="file">— 08_functions_button.ino</span></div>
+  <div class="code"><span class="c">// 8차시에서 기록한 각도값을 그대로 넣는다</span>
+int HOME[SERVOS]        = { 90, 90, 90, 90, 90, 0 };
+int PICK_READY[SERVOS]  = { 60,100, 80, 90, 90, 0 };
+int PICK[SERVOS]        = { 60,130,110, 90, 90, 0 };
+int PLACE_READY[SERVOS] = {120,100, 80, 90, 90, 0 };
+int PLACE[SERVOS]       = {120,130,110, 90, 90, 0 };</div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li>성공한 자세를 <b>각도 배열</b>로 저장한다(HOME/PICK/PLACE …).</li><li>같은 값을 넣으면 <b>항상 같은 자세</b>가 재현된다 → 재현성.</li><li>이 포즈 데이터가 자동 동작의 '레시피(재료)'가 된다.</li><li>6번(그리퍼) 자리는 moveTo가 무시하고 따로 제어한다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">9</span><span class="en">Create a function</span></div>
+  <div class="sub">반복 동작에 이름을 붙여 함수로 만든다</div>
+  <div class="lab">💻 코드 <span class="file">— 08_functions_button.ino</span></div>
+  <div class="code"><span class="c">// 만드는 법:  void 이름(){ 할 일 }   / 쓰는 법:  이름();</span>
+void gripperOpen(){ myservo[5].write(0); delay(400); }
+void gripperClose(){ myservo[5].write(90); delay(400); }
+void goHome(){
+  for(int i=0;i&lt;SERVOS;i++) myservo[i].write(INITANGLE[i]);
+}
+<span class="c">// 부를 때:  goHome();  gripperClose();</span></div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li><b>함수</b> = 자주 쓰는 동작 덩어리에 '이름'을 붙인 것.</li><li>만드는 3요소 : ① 이름  ② void(돌려줄 값 없음)  ③ { 할 일 }.</li><li><b>loop() 바깥</b>에 만들고, 어디서든 <b>이름();</b> 한 줄로 부른다.</li><li>복붙 대신 함수를 쓰면 코드가 짧아지고 고치기 쉽다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">10</span><span class="en">Automatic Pick &amp; Place</span></div>
+  <div class="sub">함수를 순서대로 불러 자동 실행한다</div>
+  <div class="lab">💻 코드 <span class="file">— 08_functions_button.ino</span></div>
+  <div class="code">void autoPickAndPlace(){     <span class="c">// 함수들을 &#x27;순서대로&#x27; 호출 = 자동화</span>
+  gripperOpen();  moveTo(PICK_READY); moveTo(PICK);
+  gripperClose(); moveTo(PICK_READY); moveTo(PLACE_READY);
+  moveTo(PLACE);  gripperOpen();      goHome();
+}
+void loop(){                 <span class="c">// 버튼(디지털 7번)을 누르면 실행</span>
+  if(lastButton==HIGH &amp;&amp; digitalRead(7)==LOW) autoPickAndPlace();
+}</div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li>함수를 <b>순서대로 호출</b>하면 사람이 하던 작업이 자동으로 실행된다.</li><li><b>버튼(조이스틱 SW, 7번)</b>을 누르는 순간 한 번 실행된다.</li><li>실패하면 포즈 각도값을 조금씩 조정해 성공률을 올린다.</li><li>이것이 '반복노동을 코드로 대체'하는 자동화의 핵심이다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">11</span><span class="en">Final Mission Design</span></div>
+  <div class="sub">배운 것을 조합해 팀 미션을 설계한다</div>
+  <div class="lab">💻 코드 <span class="file">— (팀이 직접 작성)</span></div>
+  <div class="code"><span class="c">// 우리 팀 미션 = 지금까지 배운 조각들의 조합</span>
+<span class="c">// 1) 포즈 데이터 정하기   : int A[SERVOS]={..};  int B[SERVOS]={..};</span>
+<span class="c">// 2) 동작 함수 만들기     : void step1(){ moveTo(A); gripperClose(); }</span>
+<span class="c">// 3) 순서대로 부르기      : void mission(){ step1(); step2(); ... }</span>
+<span class="c">// 4) 버튼/시리얼로 실행하고 반복 테스트로 튜닝</span></div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li>새 코드가 아니라 <b>배운 조각(포즈·함수·순서·버튼)을 조합</b>한다.</li><li>미션에 맞는 포즈 배열과 동작 함수를 새로 정의한다.</li><li>mission() 안에서 함수들을 순서대로 불러 완성한다.</li><li>테스트하며 각도·delay를 조정해 성공률을 높인다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">12</span><span class="en">Demo &amp; Career</span></div>
+  <div class="sub">완성 코드를 시연하고 진로와 연결한다</div>
+  <div class="lab">💻 코드 <span class="file">— (종합)</span></div>
+  <div class="code"><span class="c">// 최종 시연용 — 우리 팀 mission() 을 버튼으로 실행</span>
+void loop(){
+  if(눌림) mission();     <span class="c">// 데모데이 시연</span>
+}
+<span class="c">// 이 코드가 하는 일 = 어떤 직업의 축소판일까?</span>
+<span class="c">//  · 자동화 엔지니어 · 스마트팩토리 · 물류 · 재활로봇 ...</span></div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li>완성한 mission()을 버튼으로 실행해 <b>시연(데모데이)</b> 한다.</li><li>코드 한 줄 한 줄이 실제 산업 현장의 <b>어떤 일</b>과 닮았는지 이야기한다.</li><li>'내가 없애고 싶은 반복노동은?'을 코드 아이디어로 발표한다.</li><li>활동 전체가 진로 탐색의 근거(포트폴리오)가 된다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section><section class="page">
+  <div class="hd"><span class="num">★</span><span class="en">group dance mission</span></div>
+  <div class="sub">동작 함수를 나눠 만들어 군무를 완성한다</div>
+  <div class="lab">💻 코드 <span class="file">— 09_dance.ino</span></div>
+  <div class="code">const int BEAT = 700;        <span class="c">// 한 박자(ms) — 모든 팀이 같은 값!</span>
+void moveTimed(int t[], int dur){  <span class="c">// 거리와 상관없이 dur(ms)만에 도착</span>
+  ... 시간 비율 f 로 보간 이동 ...  <span class="c">// → 어떤 동작도 정확히 한 박자</span>
+}
+void waveHand(){ moveTimed(WAVE_L,BEAT); moveTimed(WAVE_R,BEAT); }
+void routine(){ waveHand(); twist(); bow(); }  <span class="c">// 팀이 합치는 안무</span></div>
+  <div class="lab">📖 코드 설명</div>
+  <ul class="exp"><li>학생마다 동작 함수(waveHand·twist·bow …)를 하나씩 맡아 만든다.</li><li><b>moveTimed</b>는 이동 거리와 무관하게 정확히 한 박자에 끝난다 → 박자 동기화.</li><li>모든 팀이 같은 BEAT를 쓰고 동시에 시작하면 <b>칼군무</b>가 된다.</li><li>함수를 순서대로 부르는 routine()이 곧 안무 타임라인이다.</li></ul>
+  <div class="foot">충남교육청 진로융합교육원 · 아두이노 6축 로봇팔 스마트 자동화 미션 — 단계별 코드 자료</div>
+</section></body></html>
