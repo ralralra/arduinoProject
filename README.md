@@ -1,24 +1,13 @@
+# arduinoProject
 
-> 이 페이지를 [https://ralralra.github.io/microBit/](https://ralralra.github.io/microBit/)으로 열기
+아두이노 기반 교육 자료를 모아 둔 저장소.
 
-## 확장으로 사용
+## 폴더
 
-이 저장소는 MakeCode에서 **확장**으로 추가될 수 있습니다.
-
-* [https://makecode.microbit.org/](https://makecode.microbit.org/) 열기
-* **새로운 프로젝트**에서 클릭
-* 톱니바퀴 모양 메뉴에서 **확장**을 클릭합니다
-* **https://github.com/ralralra/microBit**으로 검색하고 가져오기
-
-## 이 프로젝트 편집
-
-MakeCode에서 이 저장소를 편집합니다.
-
-* [https://makecode.microbit.org/](https://makecode.microbit.org/) 열기
-* **가져오기**를 클릭한 다음 **가져오기 URL**를 클릭합니다
-* **https://github.com/ralralra/microBit**를 붙여넣고 가져오기를 클릭하세요.
-
-#### 메타데이터(검색, 렌더링에 사용)
-
-* for PXT/microbit
-<script src="https://makecode.com/gh-pages-embed.js"></script><script>makeCodeRender("{{ site.makecode.home_url }}", "{{ site.github.owner_name }}/{{ site.github.repository_name }}");</script>
+- **[`robot-arm-curriculum/`](robot-arm-curriculum/)** — 아두이노 6자유도 로봇팔 진로수업 자료
+  - `code/` — 수업 순서대로 번호를 붙인 아두이노 스케치 (01~10)
+  - `README.md` — 12차시 계획 · 미션 메뉴
+  - `LESSON_PLAN_6x2h.md` — 6회 × 2시간 상세 수업계획안
+  - `CODE_GUIDE.md` — 교사용 코드 구조·함수 설명
+  - `slides/` — 수업 진행용 PPT, 교사용 가이드 PPT
+  - `worksheets/` — 학습활동지 최종본, 단계별 코드설명 보충자료
